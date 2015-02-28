@@ -48,6 +48,7 @@ public class MainActivity extends ActionBarActivity {
         EditText destinationText = (EditText) findViewById(R.id.toLocation);
         String destination = destinationText.getText().toString();
         String URL = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s",origin, destination, API_KEY);
+
         System.out.println(URL);
         new GetDirectionsTask().execute(URL);
     }
