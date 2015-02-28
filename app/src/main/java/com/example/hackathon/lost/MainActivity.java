@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 
 public class MainActivity extends ActionBarActivity {
-
+    public static final String API_KEY="AIzaSyA8F60HygLJWrkeezbTvj392tDuf7s1aW0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void getDirections(View button){
-        System.out.println("Button is clicked!!");
+        EditText originText = (EditText) findViewById(R.id.fromLocation);
+        String origin = originText.getText().toString();
+        EditText destinationText = (EditText) findViewById(R.id.toLocation);
+        String destination = destinationText.getText().toString();
+        String URL = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s",origin, destination, API_KEY);
+        System.out.println(URL);
+        new GetDirectionsTask().execute(URL);
     }
 }
