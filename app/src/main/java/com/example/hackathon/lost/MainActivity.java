@@ -70,7 +70,8 @@ public class MainActivity extends ActionBarActivity {
         String URL = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s",origin, destination, API_KEY);
 
         System.out.println(URL);
-
+        LinearLayout directionView = (LinearLayout)findViewById(R.id.directions_layout);
+        directionView.removeAllViews();
         new GetDirectionsTask().execute(URL);
 
 
@@ -120,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
 
                 JSONObject jsonCurrent = null;
                 String current = null;
-                LinearLayout directionList = (LinearLayout) findViewById(R.id.main_layout);
+                LinearLayout directionList = (LinearLayout) findViewById(R.id.directions_layout);
 
                 for(int i = 0; i < jsonSteps.length(); i++){
                     jsonCurrent = jsonSteps.getJSONObject(i);
