@@ -53,10 +53,12 @@ public class GetDirectionsTask extends AsyncTask<String, Void, String> {
                     .getJSONObject(0).getJSONArray("legs")
                     .getJSONObject(0).getJSONArray("steps");
 
-            JSONObject current = null;
+            JSONObject jsonCurrent = null;
+            String current = null;
             for(int i = 0; i < jsonSteps.length(); i++){
-                current = jsonSteps.getJSONObject(i);
-                System.out.println(current.getString("html_instructions"));
+                jsonCurrent = jsonSteps.getJSONObject(i);
+                current = jsonCurrent.getString("html_instructions").replaceAll("\\<.*?\\>", "");
+                System.out.println(current);
             }
 
         } catch (JSONException e) {
