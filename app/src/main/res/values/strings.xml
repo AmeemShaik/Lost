@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="fromLocation">Enter Starting Point</string>
+    <string name="toLocation">Enter Destination</string>
+    <string name="getDirectionsButton">Get Directions</string>
 </resources>
