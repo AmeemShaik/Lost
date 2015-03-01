@@ -18,10 +18,14 @@ import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,13 +33,24 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
     public static final String API_KEY="AIzaSyA8F60HygLJWrkeezbTvj392tDuf7s1aW0";
     private static final int CONTACT_PICKER_RESULT = 1001;
-
     private TextView text2;
+    private String URLMessaging= "http://ashaiks.com//smsasmx/SMSws.asmx/SendText";
+    private String phoneNumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +91,9 @@ public class MainActivity extends ActionBarActivity {
         System.out.println(URL);
         LinearLayout directionView = (LinearLayout)findViewById(R.id.directions_layout);
         directionView.removeAllViews();
-        new GetDirectionsTask().execute(URL);
-
+        GetDirectionsTask getDirs = new GetDirectionsTask();
+        getDirs.execute(URL,URLMessaging,getPhoneNumber());
+        String textMsg = getDirs.getFullDirections();
 
     }
     public void launchContactPicker(View button){
@@ -99,6 +115,7 @@ public class MainActivity extends ActionBarActivity {
                         Toast.makeText(getApplicationContext(), cNumber, Toast.LENGTH_SHORT).show();
                         TextView contactText = (TextView)findViewById(R.id.contact);
                         contactText.setText(cNumber);
+                        setPhoneNumber(cNumber);
                     }catch(Exception e){
 
                     }
@@ -112,11 +129,20 @@ public class MainActivity extends ActionBarActivity {
     }
     public class GetDirectionsTask extends AsyncTask<String, Void, String> {
 
-
-
+        private String URLMessaging;
+        private String phoneNum;
+        private String fullDirections;
+        public void setFullDirections(String fullDirections){
+            this.fullDirections = fullDirections;
+        }
+        public String getFullDirections(){
+            return fullDirections;
+        }
         @Override
         protected String doInBackground(String... params) {
             String URL = params[0];
+             URLMessaging = params[1];
+             phoneNum = params[2];
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse response;
             String responseString = null;
@@ -156,6 +182,7 @@ public class MainActivity extends ActionBarActivity {
                 JSONObject jsonCurrent = null;
                 String current = null;
                 LinearLayout directionList = (LinearLayout) findViewById(R.id.directions_layout);
+                String temp = "";
 
                 for(int i = 0; i < jsonSteps.length(); i++){
                     jsonCurrent = jsonSteps.getJSONObject(i);
@@ -165,10 +192,23 @@ public class MainActivity extends ActionBarActivity {
                     currentView.setText(current);
                     currentView.setTextColor(Color.BLACK);
                     directionList.addView(currentView);
+                    temp += current;
                 }
-//                TextView textView = (TextView) findViewById(R.id.textView);
-//                textView.setText(current);
+                setFullDirections(temp);
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse response;
+                HttpPost httpPost = new HttpPost(URLMessaging);
+                try{
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
+                    nameValuePairs.add(new BasicNameValuePair("message",fullDirections));
+                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                    response = httpClient.execute(httpPost);
+                    System.out.println(response.toString());
+                }
+                catch (IOException e){
 
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
