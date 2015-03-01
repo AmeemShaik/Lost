@@ -66,6 +66,35 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    public void onBackgroundTaskCompleted(String data){
+        new SendMessageTask().execute(URLMessaging,phoneNumber,data);
+    }
+    public class SendMessageTask extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            String URLMessaging = params[0];
+            String phoneNumber = params[1];
+            String message = params[2];
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response;
+            HttpPost httpPost = new HttpPost(URLMessaging);
+            try{
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                nameValuePairs.add(new BasicNameValuePair("phone", phoneNumber));
+                nameValuePairs.add(new BasicNameValuePair("message",message));
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                response = httpClient.execute(httpPost);
+                System.out.println(response.getStatusLine().toString());
+            }
+            catch (IOException e){
+
+            }
+            return null;
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -91,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
         System.out.println(URL);
         LinearLayout directionView = (LinearLayout)findViewById(R.id.directions_layout);
         directionView.removeAllViews();
-        GetDirectionsTask getDirs = new GetDirectionsTask();
+        GetDirectionsTask getDirs = new GetDirectionsTask(this);
         getDirs.execute(URL,URLMessaging,getPhoneNumber());
         String textMsg = getDirs.getFullDirections();
 
@@ -132,6 +161,13 @@ public class MainActivity extends ActionBarActivity {
         private String URLMessaging;
         private String phoneNum;
         private String fullDirections;
+        MainActivity caller;
+
+        GetDirectionsTask(MainActivity caller){
+            this.caller = caller;
+        }
+
+
         public void setFullDirections(String fullDirections){
             this.fullDirections = fullDirections;
         }
@@ -195,24 +231,12 @@ public class MainActivity extends ActionBarActivity {
                     temp += current;
                 }
                 setFullDirections(temp);
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpResponse response;
-                HttpPost httpPost = new HttpPost(URLMessaging);
-                try{
-                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                    nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
-                    nameValuePairs.add(new BasicNameValuePair("message",fullDirections));
-                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                    response = httpClient.execute(httpPost);
-                    System.out.println(response.toString());
-                }
-                catch (IOException e){
-
-                }
+                caller.onBackgroundTaskCompleted(fullDirections);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             //text2 = (TextView) findViewById(R.id.text2);
+
 
         }
     }
