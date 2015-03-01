@@ -41,7 +41,8 @@ public class MainActivity extends ActionBarActivity {
     public static final String API_KEY="AIzaSyA8F60HygLJWrkeezbTvj392tDuf7s1aW0";
     private static final int CONTACT_PICKER_RESULT = 1001;
     private TextView text2;
-    private String URLMessaging= "http://ashaiks.com//smsasmx/SMSws.asmx/SendText";
+    //private String URLMessaging= "http://ashaiks.com/smsasmx/SMSws.asmx/SendText";
+ private String URLMessaging= "http://smswcf.azurewebsites.net/smsws.asmx/SendText";
     private String phoneNumber;
     public String getPhoneNumber() {
         return phoneNumber;
