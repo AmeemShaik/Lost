@@ -158,8 +158,6 @@ public class MainActivity extends ActionBarActivity {
     }
     public class GetDirectionsTask extends AsyncTask<String, Void, String> {
 
-        private String URLMessaging;
-        private String phoneNum;
         private String fullDirections;
         MainActivity caller;
 
@@ -177,8 +175,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... params) {
             String URL = params[0];
-             URLMessaging = params[1];
-             phoneNum = params[2];
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse response;
             String responseString = null;
@@ -223,12 +219,12 @@ public class MainActivity extends ActionBarActivity {
                 for(int i = 0; i < jsonSteps.length(); i++){
                     jsonCurrent = jsonSteps.getJSONObject(i);
                     current = jsonCurrent.getString("html_instructions").replaceAll("\\<.*?\\>", "");
-                    System.out.println(current);
+                    current += '\n';
                     TextView currentView = new TextView(getApplicationContext());
                     currentView.setText(current);
                     currentView.setTextColor(Color.BLACK);
                     directionList.addView(currentView);
-                    temp += current;
+                    temp += "-"+current+'\n';
                 }
                 setFullDirections(temp);
                 caller.onBackgroundTaskCompleted(fullDirections);
