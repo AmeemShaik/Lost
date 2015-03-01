@@ -1,7 +1,11 @@
 package com.example.hackathon.lost;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -23,10 +28,12 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 
 
 public class MainActivity extends ActionBarActivity {
     public static final String API_KEY="AIzaSyA8F60HygLJWrkeezbTvj392tDuf7s1aW0";
+    private static final int CONTACT_PICKER_RESULT = 1001;
 
     private TextView text2;
 
@@ -34,9 +41,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
     }
 
 
@@ -75,6 +79,36 @@ public class MainActivity extends ActionBarActivity {
         new GetDirectionsTask().execute(URL);
 
 
+    }
+    public void launchContactPicker(View button){
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(contactPickerIntent,CONTACT_PICKER_RESULT);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CONTACT_PICKER_RESULT:
+                    Cursor cursor = null;
+                    String phone = "";
+                    try{
+                        Uri result = data.getData();
+                        String id = result.getLastPathSegment();
+                        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id,null, null);
+                        cursor.moveToFirst();
+                        String cNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        Toast.makeText(getApplicationContext(), cNumber, Toast.LENGTH_SHORT).show();
+                        TextView contactText = (TextView)findViewById(R.id.contact);
+                        contactText.setText(cNumber);
+                    }catch(Exception e){
+
+                    }
+                    break;
+            }
+
+        }
+        else{
+
+        }
     }
     public class GetDirectionsTask extends AsyncTask<String, Void, String> {
 

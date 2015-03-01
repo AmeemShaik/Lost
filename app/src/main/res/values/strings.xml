@@ -6,5 +6,5 @@
     <string name="fromLocation">Enter Starting Point</string>
     <string name="toLocation">Enter Destination</string>
     <string name="getDirectionsButton">Get Directions</string>
-    <string name="textDisplay">Hello</string>
+    <string name="chooseContact">Select Contact</string>
 </resources>

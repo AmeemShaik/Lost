@@ -11,7 +11,6 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
     android:weightSum="1">
-
     <EditText
         android:id="@+id/fromLocation"
         android:layout_width="fill_parent"
@@ -24,13 +23,26 @@
         android:layout_height="wrap_content"
         android:hint="@string/toLocation"
         android:inputType="text" />
-
+    <Button
+        android:id="@+id/ButtonChooseContact"
+        android:layout_height="wrap_content"
+        android:text="@string/chooseContact"
+        android:onClick="launchContactPicker"
+        android:layout_width="fill_parent">
+    </Button>
+    <TextView
+        android:id="@+id/contact"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:inputType="text" />
     <Button
         android:id="@+id/ButtonGetDirections"
         android:layout_height="wrap_content"
         android:text="@string/getDirectionsButton"
         android:onClick="getDirections"
-        android:layout_width="fill_parent">
+        android:layout_width="fill_parent"
+        android:layout_marginTop="30dp">
     </Button>
     <LinearLayout android:layout_width="match_parent"
         android:id="@+id/directions_layout"
